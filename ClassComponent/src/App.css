@@ -1,0 +1,45 @@
+.game{
+  display: flex;
+  height: 90vh;
+  width: 90vw;
+  justify-content: center;
+}
+.cell{
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  width: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  border-radius: 0;
+}
+
+.clickable:hover{
+  cursor: pointer;
+}
+
+.history button{
+  font-weight: 400;
+  padding: 0 8px;
+  border: solid black 1px;
+  border-radius: 0;
+}
+
+.board-container{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.history{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
