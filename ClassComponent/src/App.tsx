@@ -5,7 +5,6 @@ interface IAppProps {}
 interface IAppState {
   cellItems : string[],
   moves : Imove[],
-  curState : (string | null) [],
   currentMove : number
 }
 interface Imove {
@@ -136,7 +135,6 @@ export default class App extends Component<IAppProps, IAppState> {
     this.state = {
       cellItems : Array(9).fill(null),
       moves : [],
-      curState : Array(9).fill(null),
       currentMove : 0
     }
   }
