@@ -3,7 +3,6 @@ import './App.css'
 
 interface IAppProps {}
 interface IAppState {
-  cellItems : string[],
   moves : Imove[],
   currentMove : number
 }
@@ -24,15 +23,10 @@ interface IBoardProps {
 interface IBoardStates {
   activePlayer : number,
   winner : string | null,
-  draw : boolean,
-  message : string
-
 }
 
 class Cell extends React.Component<ICellProps> {
-  constructor(props : ICellProps) {
-    super(props);
-  }
+  
   render() {
     return (
       <div
@@ -47,8 +41,9 @@ class Cell extends React.Component<ICellProps> {
 
 
 class Board extends React.Component<IBoardProps, IBoardStates> {
+
   getWinner(){
-    
+
     const {cellItems} = this.props;
     
     for(let i = 0; i < 3; i++) {
@@ -61,41 +56,13 @@ class Board extends React.Component<IBoardProps, IBoardStates> {
     if(cellItems[4] && cellItems[4 - 2] == cellItems[4] && cellItems[4] == cellItems[4 + 2]) return cellItems[4];
     return null;
   }
-  constructor(props : IBoardProps) {
-    super(props);
-    const activePlayer = props.currentMove % 2;
-    const winner = this.getWinner();
-    const draw = winner ? false : props.currentMove == 9;
-    const message = winner ? `Winner is : ${winner}` : draw ? 'Match Drawn' : `Next player : ${activePlayer ? 'X' : 'O'}`
-    
-    this.state = {
-      activePlayer : activePlayer,
-      winner : winner,
-      draw : draw ,
-      message : message,
-    }
-  }
-  componentDidUpdate(prevProps: Readonly<IBoardProps>, prevState: Readonly<IBoardStates>, snapshot?: any): void {
-      if(this.props !== prevProps) {
-
-        const activePlayer = this.props.currentMove % 2;
-        const winner = this.getWinner();
-        const draw = winner ? false : this.props.currentMove == 9;
-        const message = winner ? `Winner is : ${winner}` : draw ? 'Match Drawn' : `Next player : ${activePlayer ? 'X' : 'O'}`
-        
-        this.setState({
-          activePlayer,
-          winner,
-          draw,
-          message
-        })        
-      }
-  }
-  onCellClick(cellId : number){    
+  
+  onCellClick(cellId : number){
     if(this.props.cellItems[cellId] || this.state.winner) return;
     this.props.onMove({position : cellId, icon : this.state.activePlayer ? 'X' : 'O'});
   }
-  renderCell(cellId : number) {    
+
+  renderCell(cellId : number) {
     return (
       <Cell 
         cellId={cellId} 
@@ -104,6 +71,7 @@ class Board extends React.Component<IBoardProps, IBoardStates> {
       />
     )
   }
+
   renderRow(rowId : number) {
     return (
       <div className='row'>
@@ -114,10 +82,21 @@ class Board extends React.Component<IBoardProps, IBoardStates> {
     )
 
   }
-  render() {    
+
+  render() {   
+    
+    const activePlayer = this.props.currentMove % 2;
+    const winner = this.getWinner();
+    const draw = winner ? false : this.props.currentMove == 9;
+    const message = winner ? `Winner is : ${winner}` : draw ? 'Match Drawn' : `Next player : ${activePlayer ? 'X' : 'O'}`
+
+    this.state = {
+      winner, activePlayer
+    }
+ 
     return (
       <div className='board-container'>
-        {this.state.message}
+        {message}
         <div className='board'>
           {this.renderRow(0)}
           {this.renderRow(1)}
@@ -130,37 +109,37 @@ class Board extends React.Component<IBoardProps, IBoardStates> {
 
 
 export default class App extends Component<IAppProps, IAppState> {
+  
   constructor(props : IAppProps){
     super(props);
     this.state = {
-      cellItems : Array(9).fill(null),
       moves : [],
       currentMove : 0
     }
   }
+
   onMove(move : Imove){    
     this.setState({moves : [...this.state.moves.splice(0, this.state.currentMove ), move]}) 
     this.setState({currentMove : this.state.currentMove + 1}) 
   }
+
   goBackTo(target : number){
     this.setState({currentMove : target}) 
   }
-  componentDidUpdate(prevProps: Readonly<IAppProps>, prevState: Readonly<IAppState>, snapshot?: any): void {
-      if(this.state.currentMove !== prevState.currentMove){
-        let tState = Array(9).fill(null);
-        for(let i = 0; i < this.state.currentMove; i++) {
-          const {position, icon} = this.state.moves[i];
-          tState[position] = icon;
-        }
-        this.setState({cellItems : tState})        
-      }
-  }
+  
   render() {
+    
+    let cellItems = Array(9).fill(null);
+    for(let i = 0; i < this.state.currentMove; i++) {
+      const {position, icon} = this.state.moves[i];
+      cellItems[position] = icon;
+    }
+
     return (
       <div className='game'>
         <Board 
           currentMove={this.state.currentMove} 
-          cellItems={this.state.cellItems}
+          cellItems={cellItems}
           onMove={this.onMove.bind(this)}
         />
         <ol className="history">
